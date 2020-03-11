@@ -20,26 +20,25 @@ axios.get('http://luis-lpa.ru/catalog').then(function(response){
     const resultCatalog = nodeHtmlParser.parse(response.data);
     let arrCatalog = resultCatalog.querySelector('.catalog').querySelectorAll('.object')
     // console.log(arrCatalog[0].structuredText)
-    content = arrCatalog[0].structuredText
-    fs.appendFileSync('some.csv', content+';');
+    let contentCatalog = arrCatalog[0].structuredText
+    // fs.appendFileSync('some.csv', contentCatalog+';');
     // console.log(arrCatalog[0].querySelector('a').getAttribute('href'))
     
     pageUrl = arrCatalog[0].querySelector('a').getAttribute('href');
-    console.log(pageUrl)
     axios.get(baseUrl+pageUrl).then(function(response){
         const resultFunctionalGroupOfProducts = nodeHtmlParser.parse(response.data) // notification and evacuation management system 
         let arrFunctionalGroupOfProducts = resultFunctionalGroupOfProducts.querySelector('.catalog').querySelectorAll('.object')
         // console.log(arrFunctionalGroupOfProducts[0].structuredText)
-        content = arrFunctionalGroupOfProducts[0].structuredText
-        fs.appendFileSync('some.csv', content+';');
+        let contentFunctionalGroupOfProducts = arrFunctionalGroupOfProducts[0].structuredText
+        // fs.appendFileSync('some.csv', contentFunctionalGroupOfProducts+';');
         // console.log(arrFunctionalGroupOfProducts[0].querySelector('a').getAttribute('href'))
         pageUrl = arrFunctionalGroupOfProducts[0].querySelector('a').getAttribute('href');
         axios.get(baseUrl+pageUrl).then(function(response){
             const resultProductsGroup = nodeHtmlParser.parse(response.data);
             let arrProductsGroup = resultProductsGroup.querySelector('.catalog').querySelectorAll('.object')
             // console.log(arrProductsGroup[0].structuredText)
-            content = arrProductsGroup[0].structuredText
-            fs.appendFileSync('some.csv', content+';');
+            let contentProductsGroup = arrProductsGroup[0].structuredText
+            // fs.appendFileSync('some.csv', contentProductsGroup+';');
             // console.log(arrProductsGroup[0].querySelector('a').getAttribute('href'))
             pageUrl = arrProductsGroup[0].querySelector('a').getAttribute('href')
             axios.get(baseUrl+pageUrl).then(function(response){
@@ -47,8 +46,13 @@ axios.get('http://luis-lpa.ru/catalog').then(function(response){
                 let arrSpecifications = resultProducts.querySelectorAll('tr')
                 for(let i = 1; i < arrSpecifications.length; ++i){
                     // console.log(resultProducts.querySelectorAll('tr')[i].structuredText)
-                    content = resultProducts.querySelectorAll('tr')[i].structuredText.replace(/(\r\n|\n|\r)/gm, "<br>");
-                    fs.appendFileSync('some.csv', content+';');
+                    contentProducts = resultProducts.querySelectorAll('tr')[i].structuredText.replace(/\r?\n/g, ";");
+                    fs.appendFileSync('some.csv', contentCatalog+';');
+                    fs.appendFileSync('some.csv', contentFunctionalGroupOfProducts+';');
+                    fs.appendFileSync('some.csv', contentProductsGroup+';');
+
+                    fs.appendFileSync('some.csv', contentProducts+';');
+                    fs.appendFileSync('some.csv', "\n");
                 }
             })
         })
