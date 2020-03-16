@@ -30,6 +30,26 @@ const myGet = async (url) => {
     return arrUrl
 }
 
+const myGetPage = async (url) => {
+    const response = await axios.get(url)
+    const resultParse = nodeHtmlParser.parse(response.data);
+    let headers = resultParse.querySelector('.breadcrumbs')
+    let specifications = resultParse.querySelector('tbody')
+    return [headers, specifications]
+}
+
+myGetPage(baseUrl+'/catalog/soue/lpa-mini300.html').then((arr) =>{
+    let arrHeaders = arr[0].querySelectorAll('a')
+    for(let i = 2; i < arrHeaders.length; ++i){
+        console.log(arrHeaders[i].structuredText)
+    }
+    console.log(arr[0].querySelector('span').structuredText)
+    let arrSpecifications = arr[1].querySelectorAll('tr')
+    for(let j = 0; j < arrSpecifications.length; ++j){
+        console.log(arrSpecifications[j].structuredText)
+    }
+})
+
 myGet(baseUrl+'/catalog').then((arr) => {
     let promises = []
     for(let i = 0; i < arr.length; ++i){
@@ -43,8 +63,9 @@ myGet(baseUrl+'/catalog').then((arr) => {
             for(let k = 0; k < responses[j].length; ++k){
                 // console.log(responses[j][k])
                 if(responses[j][k].endsWith('.html')){
-                    console.log(responses[j][k])
-                    fs.appendFileSync('some.csv', responses[j][k]+'\n')
+                    // console.log(responses[j][k])
+                    // fs.appendFileSync('some.csv', responses[j][k]+'\n')
+
                 }else{
                     promises.push(myGet(baseUrl+responses[j][k]))
                 }
@@ -57,8 +78,8 @@ myGet(baseUrl+'/catalog').then((arr) => {
                 for(let k = 0; k < responses[j].length; ++k){
                     // console.log(responses[j][k])
                     if(responses[j][k].endsWith('.html')){
-                        console.log(responses[j][k])
-                        fs.appendFileSync('some.csv', responses[j][k]+'\n')
+                        // console.log(responses[j][k])
+                        // fs.appendFileSync('some.csv', responses[j][k]+'\n')
                     }else{
                         promises.push(myGet(baseUrl+responses[j][k]))
                     }
@@ -68,8 +89,8 @@ myGet(baseUrl+'/catalog').then((arr) => {
                 // console.log(responses)
                 for(let j = 0; j < responses.length; ++j){
                     for(let k = 0; k < responses[j].length; ++k){
-                        console.log(responses[j][k])
-                        fs.appendFileSync('some.csv', responses[j][k]+'\n')
+                        // console.log(responses[j][k])
+                        // fs.appendFileSync('some.csv', responses[j][k]+'\n')
                     }
                 }
             })
